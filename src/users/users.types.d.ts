@@ -5,6 +5,7 @@ export interface UserServiceProps {
     name: string,
     email: string,
     password: string,
+    role: string,
   ): Promise<Omit<UserProps, 'hashedPassword'>>;
 }
 
@@ -17,4 +18,5 @@ export interface UserProps {
   name: string;
   email: string;
   hashedPassword: string;
+  role: string;
 }

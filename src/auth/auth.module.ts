@@ -18,6 +18,7 @@ config();
       // signOptions: { expiresIn: "60s" },
     }),
     UsersModule,
+    
     ConfigModule,
   ],
   providers: [AuthService],

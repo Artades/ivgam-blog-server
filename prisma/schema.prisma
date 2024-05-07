@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgres"
-  url      = env("DATABASE_URL")
+  url = env("DATABASE_URL")
 }
 
 model Favorites {
@@ -27,6 +27,7 @@ model User {
   name           String
   email          String      @unique
   hashedPassword String
+  role           String
   favorites      Favorites[]
 }
 

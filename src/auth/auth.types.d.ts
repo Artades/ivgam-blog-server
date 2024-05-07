@@ -1,3 +1,5 @@
+
+
 export interface AuthServiceProps {
   _getUserEmailFromToken(token: string): string | null;
   public signIn(
@@ -19,3 +21,4 @@ export interface AuthControllerProps {
     @Body() signUpDto: SignUpDto,
   ): Promise<{ accessToken: string; userEmailFromToken: string }>;
 }
+

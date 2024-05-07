@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UserProps } from './users.types';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
+import { Role } from 'src/enums/role.enum';
 
 @Injectable()
 export class UsersService {
@@ -36,7 +37,6 @@ export class UsersService {
     }
   }
 
-
   public async createUser(
     name: string,
     email: string,
@@ -48,6 +48,9 @@ export class UsersService {
           name,
           email,
           hashedPassword: await bcrypt.hash(password, 5),
+          role: process.env.AUTHOR_EMAILS.split(',').includes(email)
+            ? Role.AUTHOR
+            : Role.READER,
         },
       });
 
@@ -60,5 +63,4 @@ export class UsersService {
       throw new InternalServerErrorException();
     }
   }
-
 }

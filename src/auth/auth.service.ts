@@ -8,7 +8,7 @@ import {
 import { AuthServiceProps } from './auth.types';
 import { JwtService } from '@nestjs/jwt/dist';
 import { UsersService } from 'src/users/users.service';
-
+import { Role } from 'src/enums/role.enum';
 
 @Injectable()
 export class AuthService implements AuthServiceProps {
@@ -32,7 +32,6 @@ export class AuthService implements AuthServiceProps {
     }
   }
 
-
   public async signIn(
     email: string,
     password: string,
@@ -44,16 +43,23 @@ export class AuthService implements AuthServiceProps {
 
     const isValidPassword = await bcrypt.compare(password, user.hashedPassword);
 
-    if (!isValidPassword)
+    if (!isValidPassword) {
       throw new UnauthorizedException('Password is not valid');
+    }
+    let payload = {};
+    const author_emails = process.env.AUTHOR_EMAILS;
+    console.log('Authors Emails: ', author_emails);
+    if (author_emails.split(',').includes(user.email)) {
+      payload = { userId: user.id, email: user.email, role: Role.AUTHOR };
+    } else {
+      payload = { userId: user.id, email: user.email, role: Role.READER };
+    }
 
-    const payload = { userId: user.id, email: user.email };
     const accessToken = await this.jwtService.signAsync(payload);
     const userEmailFromToken = this._getUserEmailFromToken(accessToken);
 
     return { accessToken, userEmailFromToken };
   }
-
 
   public async signUp(
     name: string,
@@ -65,12 +71,16 @@ export class AuthService implements AuthServiceProps {
     if (candidate)
       throw new BadRequestException('User with given email is already exist');
 
-    const userData = await this.userService.createUser(
-      name,
-      email,
-      password,
-    );
-    const payload = { userId: userData.id, email: userData.email };
+    const user = await this.userService.createUser(name, email, password);
+    let payload = {};
+    const author_emails = process.env.AUTHOR_EMAILS;
+
+    if (author_emails.split(',').includes(user.email)) {
+      payload = { userId: user.id, email: user.email, role: Role.AUTHOR };
+    } else {
+      payload = { userId: user.id, email: user.email, role: Role.READER };
+    }
+
     const accessToken = await this.jwtService.signAsync(payload);
     const userEmailFromToken = this._getUserEmailFromToken(accessToken);
 

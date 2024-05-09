@@ -1,9 +1,9 @@
-export interface  CreatePostDTO  {
-    title: string;
-    body: string;
-    topic: string;
-    hashtags: string[];
-};
+export interface CreatePostDTO {
+  title: string;
+  body: string;
+  topic: string;
+  hashtags: string[];
+}
 
 export interface PostProps {
   id: number;
@@ -20,13 +20,19 @@ export interface PostProps {
 export interface PostsControllerProps {
   public createPost(credentials: CreatePostDTO): Promise<{ success: boolean }>;
   public getAllPosts(): Promise<PostProps[]>;
+  public suggestPost(
+    title: string,
+    description: string,
+    userEmail: string,
+  ): Promise<{ success: boolean }>;
 }
-
 
 export interface PostsServiceProps {
   public createPost(credentials: CreatePostDTO): Promise<PostProps>;
   public getAllPosts(): Promise<PostProps[]>;
+  public suggestPost(
+    title: string,
+    description: string,
+    userEmail: string,
+  ): Promise<{ success: boolean }>;
 }
-
-
-

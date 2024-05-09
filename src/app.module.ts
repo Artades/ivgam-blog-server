@@ -7,9 +7,10 @@ import { PrismaModule } from './prisma/prisma.module';
 import { PostsModule } from './posts/posts.module';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from "./auth/role.guard";
+import { EmailModule } from './email/email.module';
 
 @Module({
-  imports: [AuthModule, UsersModule, PrismaModule, PostsModule],
+  imports: [AuthModule, UsersModule, PrismaModule, PostsModule, EmailModule],
   controllers: [AppController],
   providers: [
     AppService,

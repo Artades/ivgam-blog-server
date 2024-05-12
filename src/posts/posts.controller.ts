@@ -50,12 +50,12 @@ export class PostsController {
     );
     return response;
   }
-  
+
   @Post('/:postId/addToFavorites/:userId')
   async addToFavorites(
     @Param('postId', ParseIntPipe) postId: number,
     @Param('userId', ParseIntPipe) userId: number,
-  ): Promise<void> {
-    await this.postsService.addToFavorites(postId, userId);
+  ): Promise<{ success: boolean }> {
+    return await this.postsService.addToFavorites(postId, userId);
   }
 }

@@ -4,7 +4,6 @@ import { UserProps } from './users.types';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { Role } from 'src/enums/role.enum';
-import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {

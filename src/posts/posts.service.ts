@@ -6,14 +6,16 @@ import {
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PostProps } from './posts.types';
 import { CreatePostDTO } from './posts.types';
-import { UserProps } from 'src/users/users.types';
+
 import { EmailService } from 'src/email/email.service';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class PostsService {
   constructor(
     private readonly database: PrismaService,
     private readonly emailService: EmailService,
+    private readonly usersService: UsersService,
   ) {}
 
   public async createPost(credentials: CreatePostDTO): Promise<PostProps> {
@@ -70,16 +72,25 @@ export class PostsService {
       );
     }
   }
-  
-  public async addToFavorites(postId: number, userId: number): Promise<any> {
+
+  public async addToFavorites(postId: number, userId: number): Promise<{success: boolean}> {
     try {
-      // Увеличиваем количество лайков поста
-      const updatedPost = await this.database.prisma.post.update({
+      const user = await this.usersService.findOneById(userId);
+
+      const existingLike = user.favorites.some(
+        (post) => postId === post.postId,
+      );
+
+      if (existingLike) {
+        console.log(`User with id ${userId} has already liked this post`);
+        return { success: false };
+      }
+
+       await this.database.prisma.post.update({
         where: { id: postId },
         data: { likesAmount: { increment: 1 } }, // Увеличиваем на 1
       });
 
-      // Добавляем пост в избранное пользователя
       await this.database.prisma.favoritePost.create({
         data: {
           postId: postId,
@@ -87,7 +98,7 @@ export class PostsService {
         },
       });
 
-      return updatedPost;
+      return {success: true};
     } catch (error) {
       throw new InternalServerErrorException(
         'Something went wrong adding to favorites',

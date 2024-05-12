@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PostProps } from './posts.types';
 import { CreatePostDTO } from './posts.types';
@@ -63,6 +67,30 @@ export class PostsService {
     } catch (error) {
       throw new InternalServerErrorException(
         'Something went wrong creating the suggestion',
+      );
+    }
+  }
+  
+  public async addToFavorites(postId: number, userId: number): Promise<any> {
+    try {
+      // Увеличиваем количество лайков поста
+      const updatedPost = await this.database.prisma.post.update({
+        where: { id: postId },
+        data: { likesAmount: { increment: 1 } }, // Увеличиваем на 1
+      });
+
+      // Добавляем пост в избранное пользователя
+      await this.database.prisma.favoritePost.create({
+        data: {
+          postId: postId,
+          userId: userId,
+        },
+      });
+
+      return updatedPost;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Something went wrong adding to favorites',
       );
     }
   }

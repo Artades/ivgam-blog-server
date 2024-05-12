@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDTO, PostProps } from './posts.types';
@@ -29,6 +30,7 @@ export class PostsController {
     const response = this.postsService.createPost(credentials);
     return response;
   }
+
   @UseGuards(AuthGuard)
   @Get('getAll')
   public async getAllPosts(): Promise<PostProps[]> {
@@ -47,5 +49,13 @@ export class PostsController {
       body.userEmail,
     );
     return response;
+  }
+  
+  @Post('/:postId/addToFavorites/:userId')
+  async addToFavorites(
+    @Param('postId', ParseIntPipe) postId: number,
+    @Param('userId', ParseIntPipe) userId: number,
+  ): Promise<void> {
+    await this.postsService.addToFavorites(postId, userId);
   }
 }

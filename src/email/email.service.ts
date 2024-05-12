@@ -19,8 +19,7 @@ export class EmailService implements IEmailService {
         },
       });
 
-      console.log(transporter);
-
+     
       await transporter.sendMail({
         from: process.env.MAIL,
         to: "artyomkaaa19@gmail.com", // Sending to yourself for this example

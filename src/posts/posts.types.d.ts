@@ -25,6 +25,7 @@ export interface PostsControllerProps {
     description: string,
     userEmail: string,
   ): Promise<{ success: boolean }>;
+  likePost(postId: number, userId: number): Promise<void>;
 }
 
 export interface PostsServiceProps {
@@ -35,4 +36,6 @@ export interface PostsServiceProps {
     description: string,
     userEmail: string,
   ): Promise<{ success: boolean }>;
+  likePost(postId: number, userId: number): Promise<void>;
+  addToFavorites(postId: number, userId: number): Promise<void>;
 }

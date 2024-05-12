@@ -4,6 +4,7 @@ import { UserProps } from './users.types';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { Role } from 'src/enums/role.enum';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -12,12 +13,12 @@ export class UsersService {
     private readonly jwtService: JwtService,
   ) {}
 
-  public async findOneByEmail(email: string): Promise<UserProps | null> {
+  public async findOneByEmail(email: string): Promise<UserProps> {
     try {
       const user = await this.database.prisma.user.findUnique({
         where: { email },
       });
-      return user;
+      return user as UserProps;
     } catch (error) {
       console.log('Error finding user by Email', email);
     }
@@ -27,14 +28,31 @@ export class UsersService {
       const decodedJwtToken = this.jwtService.decode(jwtToken);
       const user = await this.database.prisma.user.findUnique({
         where: { email: decodedJwtToken.email },
+        include: {favorites: true}
       });
 
-      return user;
+      return user as UserProps;
     } catch (error) {
       console.error('Something went wrong while finding a user: ', error);
 
       throw new InternalServerErrorException();
     }
+  }
+
+  public async findOneById(id: number) : Promise<UserProps> {
+     try {
+       
+       const user = await this.database.prisma.user.findUnique({
+         where: { id },
+         include: {favorites: true}
+       });
+
+       return user as UserProps;
+     } catch (error) {
+       console.error('Something went wrong while finding a user by id: ', error);
+
+       throw new InternalServerErrorException();
+     }
   }
 
   public async createUser(
@@ -51,12 +69,15 @@ export class UsersService {
           role: process.env.AUTHOR_EMAILS.split(',').includes(email)
             ? Role.AUTHOR
             : Role.READER,
+
+          favorites: { create: [] },
         },
       });
 
+      console.log("USER AFTER CREATING: ", user)
       const { hashedPassword, ...userData } = user;
 
-      return userData;
+      return userData as UserProps;
     } catch (error) {
       console.error('Something went wrong while creating a user: ', error);
 

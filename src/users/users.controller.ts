@@ -37,8 +37,20 @@ export class UsersController implements UserControllerProps {
   public async findOneById(
     @Param('userId', ParseIntPipe) userId: number,
   ): Promise<UserProps> {
-   
     const user = await this.userService.findOneById(userId);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
+  }
+
+  @Get('/findOneByEmail/:userEmail')
+  public async findOneByEmail(
+    @Param('userEmail') userEmail: string,
+  ): Promise<UserProps> {
+    const user = await this.userService.findOneByEmail(userEmail);
 
     if (!user) {
       throw new NotFoundException('User not found');

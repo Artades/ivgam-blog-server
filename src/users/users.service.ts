@@ -16,6 +16,7 @@ export class UsersService {
     try {
       const user = await this.database.prisma.user.findUnique({
         where: { email },
+        include: { favorites: true },
       });
       return user as UserProps;
     } catch (error) {
@@ -27,7 +28,7 @@ export class UsersService {
       const decodedJwtToken = this.jwtService.decode(jwtToken);
       const user = await this.database.prisma.user.findUnique({
         where: { email: decodedJwtToken.email },
-        include: {favorites: true}
+        include: { favorites: true },
       });
 
       return user as UserProps;
@@ -38,20 +39,19 @@ export class UsersService {
     }
   }
 
-  public async findOneById(id: number) : Promise<UserProps> {
-     try {
-       
-       const user = await this.database.prisma.user.findUnique({
-         where: { id },
-         include: {favorites: true}
-       });
+  public async findOneById(id: number): Promise<UserProps> {
+    try {
+      const user = await this.database.prisma.user.findUnique({
+        where: { id },
+        include: { favorites: true },
+      });
 
-       return user as UserProps;
-     } catch (error) {
-       console.error('Something went wrong while finding a user by id: ', error);
+      return user as UserProps;
+    } catch (error) {
+      console.error('Something went wrong while finding a user by id: ', error);
 
-       throw new InternalServerErrorException();
-     }
+      throw new InternalServerErrorException();
+    }
   }
 
   public async createUser(
@@ -71,9 +71,12 @@ export class UsersService {
 
           favorites: { create: [] },
         },
+        include: {
+          favorites: true,
+        },
       });
 
-      console.log("USER AFTER CREATING: ", user)
+      console.log('USER AFTER CREATING: ', user);
       const { hashedPassword, ...userData } = user;
 
       return userData as UserProps;

@@ -73,23 +73,29 @@ export class PostsService {
     }
   }
 
-  public async addToFavorites(postId: number, userId: number): Promise<{success: boolean}> {
+  public async addToFavorites(
+    postId: number,
+    userId: number,
+  ): Promise<{ success: boolean }> {
     try {
       const user = await this.usersService.findOneById(userId);
 
-      const existingLike = user.favorites.some(
-        (post) => postId === post.postId,
-      );
-
-      if (existingLike) {
-        console.log(`User with id ${userId} has already liked this post`);
-        return { success: false };
+      if (!user) {
+        throw new NotFoundException('User not found');
       }
 
-       await this.database.prisma.post.update({
-        where: { id: postId },
-        data: { likesAmount: { increment: 1 } }, // Увеличиваем на 1
-      });
+      const existingFavorite =
+        await this.database.prisma.favoritePost.findFirst({
+          where: {
+            postId: postId,
+            userId: userId,
+          },
+        });
+
+      if (existingFavorite) {
+        console.log(`User with id ${userId} has already favorited this post`);
+        return { success: false };
+      }
 
       await this.database.prisma.favoritePost.create({
         data: {
@@ -98,8 +104,14 @@ export class PostsService {
         },
       });
 
-      return {success: true};
+      await this.database.prisma.post.update({
+        where: { id: postId },
+        data: { likesAmount: { increment: 1 } },
+      });
+
+      return { success: true };
     } catch (error) {
+      console.error('Something went wrong adding to favorites: ', error);
       throw new InternalServerErrorException(
         'Something went wrong adding to favorites',
       );

@@ -8,14 +8,6 @@ datasource db {
   url = "postgres://postgres.wmyfaqiqrubaqtitxvxp:ivgamblog!A@aws-0-eu-central-1.pooler.supabase.com:5432/postgres"
 }
 
-model FavoritePost {
-  id       Int    @id @default(autoincrement())
-  post     Post   @relation(fields: [postId], references: [id])
-  postId   Int
-  user     User   @relation(fields: [userId], references: [id])
-  userId   Int
-}
-
 model User {
   id             Int            @id @default(autoincrement())
   name           String
@@ -37,3 +29,12 @@ model Post {
   likesAmount    Int
   favorites      FavoritePost[]
 }
+
+model FavoritePost {
+  id       Int    @id @default(autoincrement())
+  post     Post   @relation(fields: [postId], references: [id])
+  postId   Int
+  user     User   @relation(fields: [userId], references: [id])
+  userId   Int
+}
+

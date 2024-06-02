@@ -18,23 +18,34 @@ export class PostsService {
     private readonly usersService: UsersService,
   ) {}
 
-  public async createPost(credentials: CreatePostDTO): Promise<PostProps> {
+  public async createPost(
+    credentials: CreatePostDTO,
+    imageUrl: string,
+  ): Promise<PostProps> {
     try {
+   
       const post = await this.database.prisma.post.create({
         data: {
           title: credentials.title,
           body: credentials.body,
-          hashtags: { set: credentials.hashtags },
+          hashtags: credentials.hashtags,
           topic: credentials.topic,
           dateOfCreation: new Date().toISOString(),
           dateOfUpdation: new Date().toISOString(),
           views: 0,
           likesAmount: 0,
+          imageUrl: imageUrl,
         },
       });
 
+      console.log('POST: ', post);
+
       return post;
-    } catch (error) {}
+    } catch (error) {
+      console.log("Cred: ", credentials)
+      console.log("Error: ", error)
+      throw new InternalServerErrorException('Error creating post');
+    }
   }
 
   public async getAllPosts(): Promise<PostProps[]> {
@@ -114,6 +125,60 @@ export class PostsService {
       console.error('Something went wrong adding to favorites: ', error);
       throw new InternalServerErrorException(
         'Something went wrong adding to favorites',
+      );
+    }
+  }
+
+  public async removeFromFavorites(
+    postId: number,
+    userId: number,
+  ): Promise<{ success: boolean }> {
+    try {
+      const user = await this.usersService.findOneById(userId);
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      const existingFavorite =
+        await this.database.prisma.favoritePost.findFirst({
+          where: {
+            postId: postId,
+            userId: userId,
+          },
+        });
+
+      if (!existingFavorite) {
+        console.log(`User with id ${userId} has not favorited this post`);
+        return { success: false };
+      }
+
+      await this.database.prisma.favoritePost.delete({
+        where: {
+          id: existingFavorite.id,
+        },
+      });
+
+      await this.database.prisma.post.update({
+        where: { id: postId },
+        data: { likesAmount: { decrement: 1 } },
+      });
+
+      return { success: true };
+    } catch (error) {
+      console.error('Something went wrong removing from favorites: ', error);
+      throw new InternalServerErrorException(
+        'Something went wrong removing from favorites',
+      );
+    }
+  }
+
+  public async getPostById(postId: number): Promise<PostProps> {
+    try {
+      return this.database.prisma.post.findUnique({ where: { id: postId } });
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Something went wrong getting post with id: ' + postId,
       );
     }
   }

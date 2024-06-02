@@ -24,10 +24,11 @@ model Post {
   dateOfCreation String
   dateOfUpdation String
   topic          String
-  hashtags       String[]
+  hashtags       String
   views          Int
   likesAmount    Int
   favorites      FavoritePost[]
+  imageUrl      String?
 }
 
 model FavoritePost {

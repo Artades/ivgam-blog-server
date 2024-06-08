@@ -50,7 +50,11 @@ export class PostsService {
 
   public async getAllPosts(): Promise<PostProps[]> {
     try {
-      return this.database.prisma.post.findMany({});
+      return this.database.prisma.post.findMany({
+        orderBy: {
+          dateOfCreation:"desc"
+        }
+      });
     } catch (error) {
       throw new InternalServerErrorException(
         'Something went wrong getting all posts',

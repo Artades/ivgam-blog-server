@@ -28,9 +28,9 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Post('createPost')
-  // @Roles(Role.AUTHOR)
-  // @UseGuards(AuthGuard)
-  // @UseGuards(RolesGuard)
+  @Roles(Role.AUTHOR)
+  @UseGuards(AuthGuard)
+  @UseGuards(RolesGuard)
   @UseInterceptors(FileInterceptor('image', multerConfig))
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: CreatePostWithImageDTO })

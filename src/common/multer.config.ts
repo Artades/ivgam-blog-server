@@ -4,7 +4,7 @@ import { extname } from 'path';
 
 export const multerConfig: MulterModuleOptions = {
   storage: diskStorage({
-    destination: './uploads', // Папка для сохранения загруженных файлов
+    destination: './uploads',
     filename: (req, file, callback) => {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
       const ext = extname(file.originalname);

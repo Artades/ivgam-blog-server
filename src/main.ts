@@ -3,6 +3,8 @@ import { AppModule } from './app.module';
 // import cookieParser from 'cookie-parser';
 import { config } from 'dotenv';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as express from 'express';
+import * as path from 'path';
 
 config();
 
@@ -10,23 +12,27 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix('api');
-   app.enableCors({
+  app.enableCors({
     credentials: true,
-   })
+  });
 
-    const config = new DocumentBuilder()
-      .setTitle('Ivgam-Blog')
-      .setVersion('1.0')
-      .addBearerAuth()
-      .build();
-    const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('/api/swagger', app, document, {
-      swaggerOptions: {
-        persistAuthorization: true,
-      },
-    });
+  const config = new DocumentBuilder()
+    .setTitle('Ivgam-Blog')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('/api/swagger', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
 
   // app.use(cookieParser());
+  app.use(
+    '/api/uploads',
+    express.static(path.join(__dirname, '..', 'uploads')),
+  );
 
   await app.listen(process.env.SERVER_PORT);
 

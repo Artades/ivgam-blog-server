@@ -17,6 +17,10 @@ export class CreatePostDTO {
   @IsString()
   @ApiProperty()
   hashtags: string;
+
+  @IsString()
+  @ApiProperty()
+  creator?: string;
 }
 
 export class CreatePostWithImageDTO extends CreatePostDTO {
@@ -35,6 +39,7 @@ export interface PostProps {
   views: number;
   likesAmount: number;
   imageUrl: string;
+  creator?: string
 }
 
 export interface PostsControllerProps {

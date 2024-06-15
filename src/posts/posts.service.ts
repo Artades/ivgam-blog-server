@@ -35,6 +35,7 @@ export class PostsService {
           views: 0,
           likesAmount: 0,
           imageUrl: imageUrl,
+          creator: credentials.creator
         },
       });
 

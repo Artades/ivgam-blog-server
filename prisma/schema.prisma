@@ -29,6 +29,7 @@ model Post {
   likesAmount    Int
   favorites      FavoritePost[]
   imageUrl      String?
+  creator        String? 
 }
 
 model FavoritePost {

@@ -8,11 +8,14 @@ import {
   Request,
   ParseIntPipe,
   Param,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
-import { UserProps, UserControllerProps, UserServiceProps } from './users.types';
+
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UsersService } from './users.service';
 import { ApiTags } from '@nestjs/swagger';
+import {  UserControllerProps, UserProps } from './users.types';
 
 
 @Controller('users')
@@ -57,5 +60,21 @@ export class UsersController implements UserControllerProps {
     }
 
     return user;
+  }
+
+  @Patch('/profilePicture')
+  async updateProfilePicture(
+    @Body() updateProfilePictureDto: {id: number, profilePicture: string},
+  ):Promise<{success: boolean}> {
+    const { id, profilePicture } = updateProfilePictureDto;
+   
+      const result = await this.userService.updateProfilePicture(
+        id,
+        profilePicture,
+      );
+      if(result.success) {
+        console.log("Profile Picture has been set successfully")
+      }
+      return result;
   }
 }

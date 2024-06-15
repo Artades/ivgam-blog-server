@@ -65,7 +65,7 @@ export class UsersService {
           name,
           email,
           hashedPassword: await bcrypt.hash(password, 5),
-          profilePicture: "",
+          profilePicture: '',
           role: process.env.AUTHOR_EMAILS.split(',').includes(email)
             ? Role.AUTHOR
             : Role.READER,
@@ -84,6 +84,26 @@ export class UsersService {
     } catch (error) {
       console.error('Something went wrong while creating a user: ', error);
 
+      throw new InternalServerErrorException();
+    }
+  }
+
+  public async updateProfilePicture(
+    id: number,
+    profilePicture: string,
+  ): Promise<{ success: boolean }> {
+    try {
+      await this.database.prisma.user.update({
+        where: { id: id },
+        data: { profilePicture: profilePicture },
+      });
+
+      return { success: true };
+    } catch (error) {
+      console.error(
+        'Something went wrong while updating user Profile Picture:',
+        error,
+      );
       throw new InternalServerErrorException();
     }
   }

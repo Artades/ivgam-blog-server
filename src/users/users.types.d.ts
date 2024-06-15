@@ -17,6 +17,14 @@ export interface UserProps {
   profilePicture?: string;
 }
 
+export class UpdateProfilePictureDto {
+  @IsNumber()
+  readonly id: number;
+
+  @IsString()
+  readonly profilePicture: string;
+}
+
 export interface UserServiceProps {
   public findOne(jwtToken: string): Promise<UserProps>;
 
@@ -26,9 +34,13 @@ export interface UserServiceProps {
     password: string,
     role: string,
   ): Promise<Omit<UserProps, 'hashedPassword'>>;
+  public updateProfilePicture(id: number, profilePicture: string): Promise<{success: boolean}>
 }
 
 export interface UserControllerProps {
   public findOne(@Request() jwtToken: string): Promise<UserProps>;
+  // public updateProfilePicture(
+  //   updateProfilePictureDto: UpdateProfilePictureDto,
+  // ): Promise<{ success: boolean }>;
 }
 

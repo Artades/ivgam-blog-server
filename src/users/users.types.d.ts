@@ -14,6 +14,7 @@ export interface UserProps {
   hashedPassword: string;
   role: string;
   favorites: FavoritePostProps[];
+  profilePicture?: string;
 }
 
 export interface UserServiceProps {

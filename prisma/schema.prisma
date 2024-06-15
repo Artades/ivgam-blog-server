@@ -15,6 +15,7 @@ model User {
   hashedPassword String
   role           String
   favorites      FavoritePost[]
+  profilePicture String?
 }
 
 model Post {

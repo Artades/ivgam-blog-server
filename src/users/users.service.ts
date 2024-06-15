@@ -65,6 +65,7 @@ export class UsersService {
           name,
           email,
           hashedPassword: await bcrypt.hash(password, 5),
+          profilePicture: "",
           role: process.env.AUTHOR_EMAILS.split(',').includes(email)
             ? Role.AUTHOR
             : Role.READER,

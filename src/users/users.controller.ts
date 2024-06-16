@@ -64,17 +64,30 @@ export class UsersController implements UserControllerProps {
 
   @Patch('/profilePicture')
   async updateProfilePicture(
-    @Body() updateProfilePictureDto: {id: number, profilePicture: string},
-  ):Promise<{success: boolean}> {
+    @Body() updateProfilePictureDto: { id: number; profilePicture: string },
+  ): Promise<{ success: boolean }> {
     const { id, profilePicture } = updateProfilePictureDto;
+
+    const result = await this.userService.updateProfilePicture(
+      id,
+      profilePicture,
+    );
+    if (result.success) {
+      console.log('Profile Picture has been set successfully');
+    }
+    return result;
+  }
+
+  @Get('/activeUsers')
+  public async getActiveUsers(
    
-      const result = await this.userService.updateProfilePicture(
-        id,
-        profilePicture,
-      );
-      if(result.success) {
-        console.log("Profile Picture has been set successfully")
-      }
-      return result;
+  ): Promise<UserProps[]> {
+    const users:any = await this.userService.getActiveUsers();
+
+    if (!users) {
+      throw new NotFoundException('Users not found');
+    }
+
+    return users;
   }
 }

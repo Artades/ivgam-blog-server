@@ -107,4 +107,22 @@ export class UsersService {
       throw new InternalServerErrorException();
     }
   }
-}
+
+  public async getActiveUsers(): Promise<UserProps[]> {
+    try {
+      const users = await this.database.prisma.user.findMany({
+        include: {
+          favorites: true,
+        },
+        
+      });
+
+      users.sort((a, b) => b.favorites.length - a.favorites.length);
+
+      return users.slice(0, 5) as UserProps[];
+    } catch (error) {
+      console.log('Error occurred while getting active users: ', error);
+      throw new InternalServerErrorException();
+    }
+  };
+};

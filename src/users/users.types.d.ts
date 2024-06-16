@@ -17,13 +17,6 @@ export interface UserProps {
   profilePicture?: string;
 }
 
-export class UpdateProfilePictureDto {
-  @IsNumber()
-  readonly id: number;
-
-  @IsString()
-  readonly profilePicture: string;
-}
 
 export interface UserServiceProps {
   public findOne(jwtToken: string): Promise<UserProps>;

@@ -1,10 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-// import cookieParser from 'cookie-parser';
 import { config } from 'dotenv';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as express from 'express';
 import * as path from 'path';
+import * as cookieParser from 'cookie-parser';
+
 
 config();
 
@@ -13,8 +14,10 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
   app.enableCors({
+    origin: 'http://localhost:3000',
     credentials: true,
   });
+
 
   const config = new DocumentBuilder()
     .setTitle('Ivgam-Blog')
@@ -29,6 +32,7 @@ async function bootstrap() {
   });
 
   // app.use(cookieParser());
+   app.use(cookieParser());
   app.use(
     '/api/uploads',
     express.static(path.join(__dirname, '..', 'uploads')),

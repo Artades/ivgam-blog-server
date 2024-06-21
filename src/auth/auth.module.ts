@@ -1,6 +1,5 @@
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { JwtModule } from '@nestjs/jwt';
-
 import { ConfigModule } from '@nestjs/config';
 import { config } from 'dotenv';
 import { Module } from '@nestjs/common';

@@ -82,7 +82,7 @@ export class UsersController implements UserControllerProps {
   public async getActiveUsers(
    
   ): Promise<UserProps[]> {
-    const users:any = await this.userService.getActiveUsers();
+    const users = await this.userService.getActiveUsers();
 
     if (!users) {
       throw new NotFoundException('Users not found');

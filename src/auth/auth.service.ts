@@ -42,10 +42,12 @@ export class AuthService implements AuthServiceProps {
       throw new BadRequestException('User does not exist in the database');
 
     const isValidPassword = await bcrypt.compare(password, user.hashedPassword);
+    
 
     if (!isValidPassword) {
       throw new UnauthorizedException('Password is not valid');
     }
+
     let payload = {};
     const author_emails = process.env.AUTHOR_EMAILS;
     console.log('Authors Emails: ', author_emails);
@@ -85,5 +87,13 @@ export class AuthService implements AuthServiceProps {
     const userEmailFromToken = this._getUserEmailFromToken(accessToken);
 
     return { accessToken, userEmailFromToken };
+  }
+
+  public async verifyToken(token: string): Promise<any> {
+    try {
+      return this.jwtService.verify(token);
+    } catch (error) {
+      throw new UnauthorizedException('Invalid JWT Token');
+    }
   }
 }

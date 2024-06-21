@@ -20,7 +20,11 @@ import { Role } from 'src/enums/role.enum';
 import { multerConfig } from 'src/common/multer.config';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
-import { CreatePostDTO, CreatePostWithImageDTO, PostProps } from './posts.types';
+import {
+  CreatePostDTO,
+  CreatePostWithImageDTO,
+  PostProps,
+} from './posts.types';
 
 @Controller('posts')
 @ApiTags('posts')
@@ -38,7 +42,6 @@ export class PostsController {
     @Body() credentials: CreatePostDTO,
     @UploadedFile() image: Express.Multer.File,
   ) {
-  
     const imageUrl = image ? `/uploads/${image.filename}` : null;
     const response = await this.postsService.createPost(credentials, imageUrl);
     return response;
@@ -64,6 +67,11 @@ export class PostsController {
     return response;
   }
 
+  @Get('/popularHashtags')
+  async getPopularHashtags(): Promise<string[]> {
+    return await this.postsService.getPopularHashtags();
+  }
+  
   @Post('/:postId/addToFavorites/:userId')
   async addToFavorites(
     @Param('postId', ParseIntPipe) postId: number,

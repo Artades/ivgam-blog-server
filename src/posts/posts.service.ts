@@ -23,7 +23,6 @@ export class PostsService {
     imageUrl: string,
   ): Promise<PostProps> {
     try {
-   
       const post = await this.database.prisma.post.create({
         data: {
           title: credentials.title,
@@ -35,7 +34,7 @@ export class PostsService {
           views: 0,
           likesAmount: 0,
           imageUrl: imageUrl,
-          creator: credentials.creator
+          creator: credentials.creator,
         },
       });
 
@@ -43,8 +42,8 @@ export class PostsService {
 
       return post;
     } catch (error) {
-      console.log("Cred: ", credentials)
-      console.log("Error: ", error)
+      console.log('Cred: ', credentials);
+      console.log('Error: ', error);
       throw new InternalServerErrorException('Error creating post');
     }
   }
@@ -53,8 +52,8 @@ export class PostsService {
     try {
       return this.database.prisma.post.findMany({
         orderBy: {
-          dateOfCreation:"desc"
-        }
+          dateOfCreation: 'desc',
+        },
       });
     } catch (error) {
       throw new InternalServerErrorException(
@@ -185,6 +184,34 @@ export class PostsService {
       throw new InternalServerErrorException(
         'Something went wrong getting post with id: ' + postId,
       );
+    }
+  }
+
+  public async getPopularHashtags(): Promise<string[]> {
+    try {
+      const posts = await this.database.prisma.post.findMany();
+      const hashtagCounts: { [key: string]: number } = {};
+      
+
+      for (const post of posts) {
+        for (const hashtag of post.hashtags.split(",")) {
+        
+          if (hashtagCounts[hashtag]) {
+            hashtagCounts[hashtag]++;
+          } else {
+            hashtagCounts[hashtag] = 1;
+          }
+        }
+      }
+
+      const sortedHashtags = Object.entries(hashtagCounts)
+        .sort(([, countA], [, countB]) => countB - countA)
+        .map(([hashtag]) => hashtag);
+
+      return sortedHashtags.slice(0, 5);
+    } catch (error) {
+      console.error('An error occurred while getting popular hashtags:', error);
+      return [];
     }
   }
 }

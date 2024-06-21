@@ -1,14 +1,19 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Role } from 'src/enums/role.enum';
 import { ROLES_KEY } from './role.decorator';
 import { JwtService } from '@nestjs/jwt';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private reflector: Reflector, private jwtService: JwtService) {}
+  constructor(
+    private reflector: Reflector, 
+    private jwtService: JwtService,
+    private usersService: UsersService
+  ) {}
 
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -19,23 +24,27 @@ export class RolesGuard implements CanActivate {
     }
 
     const req = context.switchToHttp().getRequest();
-    const authorizationHeader = req.headers.authorization;
+    const authorizationHeader = req.headers.cookie;
 
     if (!authorizationHeader) {
-      return false; 
+      return false;
     }
 
-    const [, token] = authorizationHeader.split(' '); 
+    const [name, token] = authorizationHeader.split('=');
 
+    if (!token || name !== 'accessToken') {
+      throw new UnauthorizedException('Invalid token format');
+    }
+    
     try {
-      const decodedToken = this.jwtService.verify(token);
-      const userRoles: Role[] = [decodedToken.role];
+      const {role} = this.jwtService.verify(token);
+  
+      const userRoles = [role] as Role[];
 
-      console.log("decodedToken: ", decodedToken);
-      console.log("userRoles", userRoles)
+      console.log('userRoles', userRoles);
       return userRoles.some((role) => requiredRoles.includes(role));
     } catch (error) {
-      return false; 
+      return false;
     }
   }
 }

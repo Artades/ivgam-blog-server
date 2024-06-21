@@ -39,7 +39,7 @@ export interface PostProps {
   views: number;
   likesAmount: number;
   imageUrl: string;
-  creator?: string
+  creator?: string;
 }
 
 export interface PostsControllerProps {
@@ -54,6 +54,7 @@ export interface PostsControllerProps {
     userEmail: string,
   ): Promise<{ success: boolean }>;
   addToFavorites(postId: number, userId: number): Promise<{ success: boolean }>;
+  // getPopularHashtags(): Promise<string[]>;
 }
 
 export interface PostsServiceProps {
@@ -66,4 +67,5 @@ export interface PostsServiceProps {
   ): Promise<{ success: boolean }>;
   likePost(postId: number, userId: number): Promise<void>;
   addToFavorites(postId: number, userId: number): Promise<{ success: boolean }>;
+  // getPopularHashtags(): Promise<string[]>;
 }

@@ -35,7 +35,7 @@ export class AuthService implements AuthServiceProps {
   public async signIn(
     email: string,
     password: string,
-  ): Promise<{ accessToken: string; userEmailFromToken: string }> {
+  ): Promise<{ accessToken: string}> {
     const user = await this.userService.findOneByEmail(email);
 
     if (!user)
@@ -47,46 +47,44 @@ export class AuthService implements AuthServiceProps {
     if (!isValidPassword) {
       throw new UnauthorizedException('Password is not valid');
     }
-
     let payload = {};
     const author_emails = process.env.AUTHOR_EMAILS;
-    console.log('Authors Emails: ', author_emails);
     if (author_emails.split(',').includes(user.email)) {
-      payload = { userId: user.id, email: user.email, role: Role.AUTHOR };
+      payload = { userId: user.id, role: Role.AUTHOR };
     } else {
-      payload = { userId: user.id, email: user.email, role: Role.READER };
+      payload = { userId: user.id,  role: Role.READER };
     }
 
     const accessToken = await this.jwtService.signAsync(payload);
-    const userEmailFromToken = this._getUserEmailFromToken(accessToken);
-
-    return { accessToken, userEmailFromToken };
+   
+    return { accessToken };
   }
 
   public async signUp(
     name: string,
     email: string,
     password: string,
-  ): Promise<{ accessToken: string; userEmailFromToken: string }> {
+  ): Promise<{ accessToken: string }> {
+    
     const candidate = await this.userService.findOneByEmail(email);
 
     if (candidate)
       throw new BadRequestException('User with given email is already exist');
 
     const user = await this.userService.createUser(name, email, password);
+
     let payload = {};
     const author_emails = process.env.AUTHOR_EMAILS;
 
     if (author_emails.split(',').includes(user.email)) {
-      payload = { userId: user.id, email: user.email, role: Role.AUTHOR };
+      payload = { userId: user.id, role: Role.AUTHOR };
     } else {
-      payload = { userId: user.id, email: user.email, role: Role.READER };
+      payload = { userId: user.id, role: Role.READER };
     }
 
     const accessToken = await this.jwtService.signAsync(payload);
-    const userEmailFromToken = this._getUserEmailFromToken(accessToken);
-
-    return { accessToken, userEmailFromToken };
+  
+    return { accessToken };
   }
 
   public async verifyToken(token: string): Promise<any> {

@@ -31,8 +31,8 @@ async function bootstrap() {
     },
   });
 
-  // app.use(cookieParser());
-   app.use(cookieParser());
+
+  app.use(cookieParser());
   app.use(
     '/api/uploads',
     express.static(path.join(__dirname, '..', 'uploads')),

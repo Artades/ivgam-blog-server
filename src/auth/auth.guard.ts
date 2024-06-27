@@ -35,7 +35,7 @@ export class AuthGuard implements CanActivate {
 
       console.log('Payload: ', payload);
       request['userData'] = payload;
-
+      console.log("Payload from Auth Guard - ", payload)
       return true;
     } catch (error) {
       console.log(error); // Log the error to understand what went wrong

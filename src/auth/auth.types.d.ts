@@ -1,4 +1,3 @@
-
 import { Response, Request } from 'express';
 
 
@@ -7,26 +6,26 @@ export interface AuthServiceProps {
   public signIn(
     email: string,
     password: string,
-  ): Promise<{ accessToken: string; userEmailFromToken: string }>;
+  ): Promise<{ accessToken: string}>;
   public signUp(
     name: string,
     email: string,
     password: string,
-  ): Promise<{ accessToken: string; userEmailFromToken: string }>;
+  ): Promise<{ accessToken: string}>;
 
-  public verifyToken(token: string): Promise<any>;
+  public verifyToken(token: string): Promise<{userId: number, role: string}>;
 }
 
 export interface AuthControllerProps {
   public signIn(
     @Body() signInDto: SignInDto,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<{ accessToken: string; userEmailFromToken: string }>;
+  ): Promise<{ accessToken: string }>;
   public signUp(
     @Body() signUpDto: SignUpDto,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<{ accessToken: string; userEmailFromToken: string }>;
+  ): Promise<{ accessToken: string }>;
 
-  public verifyToken(@Req() req: Request);
+  public verifyToken(@Req() req: Request): Promise<{userId: number, role: string}>;
 }
 

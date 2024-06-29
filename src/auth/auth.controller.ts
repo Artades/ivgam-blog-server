@@ -25,7 +25,7 @@ export class AuthController implements AuthControllerProps {
     );
 
     res.cookie('accessToken', accessToken, {
-      httpOnly: false,
+      httpOnly: true,
       domain: 'localhost',
     });
     return { accessToken };
@@ -58,6 +58,7 @@ export class AuthController implements AuthControllerProps {
   public async verifyToken(@Req() req: any): Promise<{ userId: number, role: string }> {
     const token = req.cookies['accessToken'];
     const payload = await this.authService.verifyToken(token);
+    console.log("verif:", payload)
     return payload;
   }
 

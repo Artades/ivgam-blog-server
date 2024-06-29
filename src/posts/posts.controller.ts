@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   UseInterceptors,
   UploadedFile,
+  Patch,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 
@@ -93,5 +94,18 @@ export class PostsController {
     @Param('postId', ParseIntPipe) postId: number,
   ): Promise<PostProps> {
     return await this.postsService.getPostById(postId);
+  }
+
+  @Patch("/view/:postId")
+  @UseGuards(AuthGuard)
+  async viewPost(@Param('postId', ParseIntPipe) postId: number): Promise<{ success: boolean }> {
+    try {
+      const result = await this.postsService.viewPost(postId);
+      return result;
+    } catch (error) {
+      
+      console.error('Error viewing post:', error);
+      throw error; 
+    }
   }
 }

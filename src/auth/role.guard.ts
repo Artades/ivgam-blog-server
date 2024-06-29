@@ -35,10 +35,10 @@ export class RolesGuard implements CanActivate {
     if (!token || name !== 'accessToken') {
       throw new UnauthorizedException('Invalid token format');
     }
-    
+    console.log(token)
     try {
       const {role} = this.jwtService.verify(token);
-  
+      console.log('Role Guard', role)
       const userRoles = [role] as Role[];
 
       console.log('userRoles', userRoles);

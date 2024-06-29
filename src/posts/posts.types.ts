@@ -68,4 +68,5 @@ export interface PostsServiceProps {
   likePost(postId: number, userId: number): Promise<void>;
   addToFavorites(postId: number, userId: number): Promise<{ success: boolean }>;
   // getPopularHashtags(): Promise<string[]>;
+  viewPost(postId: number): Promise<{ success: true }>;
 }

@@ -19,8 +19,6 @@ export interface UserProps {
 
 
 export interface UserServiceProps {
-  public findOne(jwtToken: string): Promise<UserProps>;
-
   public createUser(
     name: string,
     email: string,
@@ -31,7 +29,7 @@ export interface UserServiceProps {
 }
 
 export interface UserControllerProps {
-  public findOne(@Request() jwtToken: string): Promise<UserProps>;
+  
   // public updateProfilePicture(
   //   updateProfilePictureDto: UpdateProfilePictureDto,
   // ): Promise<{ success: boolean }>;

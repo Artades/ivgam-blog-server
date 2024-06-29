@@ -16,7 +16,7 @@ export class PostsService {
     private readonly database: PrismaService,
     private readonly emailService: EmailService,
     private readonly usersService: UsersService,
-  ) {}
+  ) { }
 
   public async createPost(
     credentials: CreatePostDTO,
@@ -191,11 +191,11 @@ export class PostsService {
     try {
       const posts = await this.database.prisma.post.findMany();
       const hashtagCounts: { [key: string]: number } = {};
-      
+
 
       for (const post of posts) {
         for (const hashtag of post.hashtags.split(",")) {
-        
+
           if (hashtagCounts[hashtag]) {
             hashtagCounts[hashtag]++;
           } else {
@@ -213,5 +213,30 @@ export class PostsService {
       console.error('An error occurred while getting popular hashtags:', error);
       return [];
     }
+  }
+
+  public async viewPost(postId: number): Promise<{ success: boolean }> {
+    try {
+      const post = await this.database.prisma.post.update({
+        where: {
+          id: postId
+        },
+         data: {
+          views: {
+            increment: 1
+          }
+         }
+      });
+
+      if (post) {
+        return { success: true }
+      } else {
+        return { success: false }
+      }
+    } catch (error) {
+      console.log("Error occured while viewing the post: ", error)
+      throw new InternalServerErrorException("Something went wrong viewing the post")
+    }
+
   }
 }

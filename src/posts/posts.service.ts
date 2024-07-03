@@ -41,6 +41,8 @@ export class PostsService {
       console.log('POST: ', post);
 
       return post;
+  
+      
     } catch (error) {
       console.log('Cred: ', credentials);
       console.log('Error: ', error);

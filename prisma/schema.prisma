@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgres"
-  url = "postgres://postgres.wmyfaqiqrubaqtitxvxp:ivgamblog!A@aws-0-eu-central-1.pooler.supabase.com:5432/postgres"
+  url      = "postgres://postgres.wmyfaqiqrubaqtitxvxp:ivgamblog!A@aws-0-eu-central-1.pooler.supabase.com:5432/postgres"
 }
 
 model User {
@@ -16,10 +16,11 @@ model User {
   role           String
   favorites      FavoritePost[]
   profilePicture String?
+  comments       Comment[]      
 }
 
 model Post {
-  id             Int      @id @default(autoincrement())
+  id             Int            @id @default(autoincrement())
   title          String
   body           String
   dateOfCreation String
@@ -29,15 +30,25 @@ model Post {
   views          Int
   likesAmount    Int
   favorites      FavoritePost[]
-  imageUrl      String?
-  creator        String? 
+  imageUrl       String?
+  creator        String?
+  comments       Comment[]    @relation()
 }
 
 model FavoritePost {
-  id       Int    @id @default(autoincrement())
-  post     Post   @relation(fields: [postId], references: [id])
-  postId   Int
-  user     User   @relation(fields: [userId], references: [id])
-  userId   Int
+  id     Int  @id @default(autoincrement())
+  post   Post @relation(fields: [postId], references: [id])
+  postId Int
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
 }
 
+model Comment {
+  id         Int    @id @default(autoincrement())
+  post       Post   @relation(fields: [postId], references: [id])
+  postId     Int    
+  user       User   @relation(fields: [userId], references: [id])
+  userId     Int    
+  body       String
+  likesCount Int
+}

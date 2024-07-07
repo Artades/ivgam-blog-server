@@ -6,6 +6,6 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 @Module({
   controllers: [CommentsController],
   providers: [CommentsService],
-  imports: [PrismaModule]
+  imports: [PrismaModule],
 })
 export class CommentsModule {}

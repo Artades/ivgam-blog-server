@@ -1,7 +1,6 @@
 import * as nodemailer from 'nodemailer';
 import { Injectable } from '@nestjs/common';
 import { IEmailService } from './email.types';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class EmailService implements IEmailService {
@@ -19,10 +18,9 @@ export class EmailService implements IEmailService {
         },
       });
 
-     
       await transporter.sendMail({
         from: process.env.MAIL,
-        to: "artyomkaaa19@gmail.com", // Sending to yourself for this example
+        to: 'artyomkaaa19@gmail.com', // Sending to yourself for this example
         subject: 'Message from ' + `[ ${emailFrom} ]`,
         text: '',
         html,

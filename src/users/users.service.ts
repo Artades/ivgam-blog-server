@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UserProps } from './users.types';
+import { UserProps, UserWithoutPassword } from './users.types';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { Role } from 'src/enums/role.enum';
@@ -94,7 +94,7 @@ export class UsersService {
   ): Promise<{ success: boolean }> {
     try {
       await this.database.prisma.user.update({
-        where: { id: id },
+        where: { id },
         data: { profilePicture: profilePicture },
       });
 
@@ -108,21 +108,39 @@ export class UsersService {
     }
   }
 
-  public async getActiveUsers(): Promise<UserProps[]> {
+  public async getActiveUsers(): Promise<UserWithoutPassword[]> {
     try {
       const users = await this.database.prisma.user.findMany({
         include: {
-          favorites: true,
+          favorites: {
+            include: {
+              post: true,
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  email: true,
+                  role: true,
+                  profilePicture: true,
+                  // Исключаем hashedPassword
+                },
+              },
+            },
+          },
         },
-        
       });
 
       users.sort((a, b) => b.favorites.length - a.favorites.length);
 
-      return users.slice(0, 5) as UserProps[];
+      const usersWithoutPassword = users.map((user) => {
+        const { hashedPassword, ...userWithoutPassword } = user;
+        return userWithoutPassword;
+      });
+
+      return usersWithoutPassword.slice(0, 5) as UserWithoutPassword[];
     } catch (error) {
       console.log('Error occurred while getting active users: ', error);
       throw new InternalServerErrorException();
     }
-  };
-};
+  }
+}

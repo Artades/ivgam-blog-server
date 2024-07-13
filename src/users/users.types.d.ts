@@ -4,7 +4,7 @@ export interface FavoritePostProps {
   id: number;
   post: PostProps;
   postId: number;
-  user: UserProps;
+  user: UserWithoutPassword;
   userId: number;
 }
 export interface UserProps {
@@ -17,21 +17,26 @@ export interface UserProps {
   profilePicture?: string;
 }
 
+export type UserWithoutPassword = Omit<UserProps, "hashedPassword">
 
 export interface UserServiceProps {
-  public createUser(
+  createUser(
     name: string,
     email: string,
     password: string,
-    role: string,
   ): Promise<Omit<UserProps, 'hashedPassword'>>;
-  public updateProfilePicture(id: number, profilePicture: string): Promise<{success: boolean}>
+  findOneByEmail(email: string): Promise<UserProps | null>;
+  findOne(jwtToken: string): Promise<UserProps | null>;
+  findOneById(id: number): Promise<UserProps | null>;
+  updateProfilePicture(id: number, profilePicture: string): Promise<{ success: boolean }>;
+  getActiveUsers(): Promise<UserWithoutPassword[]>;
 }
 
 export interface UserControllerProps {
-  
-  // public updateProfilePicture(
-  //   updateProfilePictureDto: UpdateProfilePictureDto,
-  // ): Promise<{ success: boolean }>;
+  findOneById(id: number): Promise<UserProps | null>;
+  updateProfilePicture(
+    updateProfilePictureDto: UpdateProfilePictureDto,
+  ): Promise<{ success: boolean }>;
+  getActiveUsers(): Promise<UserWithoutPassword[]>;
 }
 

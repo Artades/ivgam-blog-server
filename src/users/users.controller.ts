@@ -2,7 +2,6 @@ import {
   Controller,
   NotFoundException,
   Get,
-  UseGuards,
   Body,
   Patch,
   ParseIntPipe,
@@ -10,10 +9,9 @@ import {
 
 } from '@nestjs/common';
 
-import { AuthGuard } from 'src/auth/auth.guard';
 import { UsersService } from './users.service';
 import { ApiTags } from '@nestjs/swagger';
-import {  UserControllerProps, UserProps } from './users.types';
+import {  UserControllerProps, UserProps, UserWithoutPassword } from './users.types';
 
 
 @Controller('users')
@@ -21,20 +19,7 @@ import {  UserControllerProps, UserProps } from './users.types';
 export class UsersController implements UserControllerProps {
   constructor(private readonly userService: UsersService) {}
 
-  @UseGuards(AuthGuard)
 
-  @Get('/findOneById/:userId')
-  public async findOneById(
-    @Param('userId', ParseIntPipe) userId: number,
-  ): Promise<UserProps> {
-    const user = await this.userService.findOneById(userId);
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    return user;
-  }
 
   @Patch('/profilePicture')
   async updateProfilePicture(
@@ -55,7 +40,7 @@ export class UsersController implements UserControllerProps {
   @Get('/activeUsers')
   public async getActiveUsers(
    
-  ): Promise<UserProps[]> {
+  ): Promise<UserWithoutPassword[]> {
     const users = await this.userService.getActiveUsers();
 
     if (!users) {
@@ -63,5 +48,19 @@ export class UsersController implements UserControllerProps {
     }
 
     return users;
+  }
+
+
+  @Get('/findOneById/:userId')
+  public async findOneById(
+    @Param('userId', ParseIntPipe) userId: number,
+  ): Promise<UserProps> {
+    const user = await this.userService.findOneById(userId);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 }

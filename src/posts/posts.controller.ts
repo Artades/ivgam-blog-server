@@ -31,7 +31,7 @@ import {
 @ApiTags('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
-
+  
   @Post('createPost')
   @Roles(Role.AUTHOR)
   @UseGuards(AuthGuard)

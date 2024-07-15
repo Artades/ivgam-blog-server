@@ -1,7 +1,5 @@
 import { IsString, IsArray } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { CommentProps } from 'src/comments/comments.types';
-
 export class CreatePostDTO {
   @IsString()
   @ApiProperty()
@@ -19,9 +17,6 @@ export class CreatePostDTO {
   @ApiProperty()
   hashtags: string;
 
-  @IsString()
-  @ApiProperty()
-  creator?: string;
 }
 
 export class CreatePostWithImageDTO extends CreatePostDTO {

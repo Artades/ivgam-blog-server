@@ -31,7 +31,6 @@ model Post {
   likesAmount    Int
   favorites      FavoritePost[]
   imageUrl       String?
-  creator        String?
   comments       Comment[]    @relation()
 }
 

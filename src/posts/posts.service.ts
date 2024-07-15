@@ -16,7 +16,7 @@ export class PostsService {
     private readonly database: PrismaService,
     private readonly emailService: EmailService,
     private readonly usersService: UsersService,
-  ) { }
+  ) {}
 
   public async createPost(
     credentials: CreatePostDTO,
@@ -34,17 +34,13 @@ export class PostsService {
           views: 0,
           likesAmount: 0,
           imageUrl: imageUrl,
-          creator: credentials.creator,
         },
       });
-
-      console.log('POST: ', post);
 
       return post;
   
       
     } catch (error) {
-      console.log('Cred: ', credentials);
       console.log('Error: ', error);
       throw new InternalServerErrorException('Error creating post');
     }

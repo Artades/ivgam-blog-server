@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { PostProps } from './posts.types';
+import { ParamProps, PostProps, SortProps } from './posts.types';
 import { CreatePostDTO } from './posts.types';
 
 import { EmailService } from 'src/email/email.service';
@@ -38,20 +38,29 @@ export class PostsService {
       });
 
       return post;
-  
-      
     } catch (error) {
       console.log('Error: ', error);
       throw new InternalServerErrorException('Error creating post');
     }
   }
 
-  public async getAllPosts(): Promise<PostProps[]> {
+  public async getAllPosts(params: ParamProps): Promise<PostProps[]> {
+    const { dateSort, popularSort } = params;
+
+    const order: Array<{ [key: string]: SortProps }> = [];
+
+    if (dateSort && (dateSort === 'asc' || dateSort === 'desc')) {
+      order.push({ dateOfCreation: dateSort });
+    }
+
+    if (popularSort && (popularSort === 'asc' || popularSort === 'desc')) {
+      order.push({ likesAmount: popularSort });
+    }
+
+    console.log(order);
     try {
-      return this.database.prisma.post.findMany({
-        orderBy: {
-          dateOfCreation: 'desc',
-        },
+      return await this.database.prisma.post.findMany({
+        orderBy: order.length > 0 ? order : undefined, // Устанавливаем orderBy только если есть параметры сортировки
       });
     } catch (error) {
       throw new InternalServerErrorException(
@@ -190,10 +199,8 @@ export class PostsService {
       const posts = await this.database.prisma.post.findMany();
       const hashtagCounts: { [key: string]: number } = {};
 
-
       for (const post of posts) {
-        for (const hashtag of post.hashtags.split(",")) {
-
+        for (const hashtag of post.hashtags.split(',')) {
           if (hashtagCounts[hashtag]) {
             hashtagCounts[hashtag]++;
           } else {
@@ -217,24 +224,25 @@ export class PostsService {
     try {
       const post = await this.database.prisma.post.update({
         where: {
-          id: postId
+          id: postId,
         },
-         data: {
+        data: {
           views: {
-            increment: 1
-          }
-         }
+            increment: 1,
+          },
+        },
       });
 
       if (post) {
-        return { success: true }
+        return { success: true };
       } else {
-        return { success: false }
+        return { success: false };
       }
     } catch (error) {
-      console.log("Error occured while viewing the post: ", error)
-      throw new InternalServerErrorException("Something went wrong viewing the post")
+      console.log('Error occured while viewing the post: ', error);
+      throw new InternalServerErrorException(
+        'Something went wrong viewing the post',
+      );
     }
-
   }
 }

@@ -24,6 +24,13 @@ export class CreatePostWithImageDTO extends CreatePostDTO {
   image?: any;
 }
 
+export type SortProps = "asc" | "desc";
+
+export interface ParamProps {
+    dateSort?: SortProps;
+    popularSort?: SortProps; 
+}
+
 export interface PostProps {
   id: number;
   title: string;
@@ -55,7 +62,7 @@ export interface PostsControllerProps {
 
 export interface PostsServiceProps {
   createPost(credentials: CreatePostDTO, imageUrl: any): Promise<PostProps>;
-  getAllPosts(): Promise<PostProps[]>;
+  getAllPosts(params: ParamProps): Promise<PostProps[]>;
   suggestPost(
     title: string,
     description: string,

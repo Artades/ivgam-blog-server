@@ -10,6 +10,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Patch,
+  Query,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 
@@ -24,6 +25,7 @@ import { Express } from 'express';
 import {
   CreatePostDTO,
   CreatePostWithImageDTO,
+  ParamProps,
   PostProps,
 } from './posts.types';
 
@@ -50,12 +52,13 @@ export class PostsController {
 
   @UseGuards(AuthGuard)
   @Get('getAll')
-  public async getAllPosts(): Promise<PostProps[]> {
-    const response = this.postsService.getAllPosts();
+  public async getAllPosts(@Query() params: ParamProps): Promise<PostProps[]> {
+    
+    const response = this.postsService.getAllPosts(params);
     return response;
   }
 
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Post('suggestPost')
   public async suggestPost(
     @Body() body: { title: string; description: string; userEmail: string },

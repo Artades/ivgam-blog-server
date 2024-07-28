@@ -19,6 +19,10 @@ export class CreatePostDTO {
 
 }
 
+export class EditPostDTO extends CreatePostDTO {
+  postId: number
+}
+
 export class CreatePostWithImageDTO extends CreatePostDTO {
   @ApiProperty({ type: 'string', format: 'binary', required: false })
   image?: any;

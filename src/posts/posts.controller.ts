@@ -25,6 +25,7 @@ import { Express } from 'express';
 import {
   CreatePostDTO,
   CreatePostWithImageDTO,
+  EditPostDTO,
   ParamProps,
   PostProps,
 } from './posts.types';
@@ -33,7 +34,7 @@ import {
 @ApiTags('posts')
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
-  
+
   @Post('createPost')
   @Roles(Role.AUTHOR)
   @UseGuards(AuthGuard)
@@ -53,7 +54,6 @@ export class PostsController {
   @UseGuards(AuthGuard)
   @Get('getAll')
   public async getAllPosts(@Query() params: ParamProps): Promise<PostProps[]> {
-    
     const response = this.postsService.getAllPosts(params);
     return response;
   }
@@ -75,7 +75,7 @@ export class PostsController {
   async getPopularHashtags(): Promise<string[]> {
     return await this.postsService.getPopularHashtags();
   }
-  
+
   @Post('/:postId/addToFavorites/:userId')
   async addToFavorites(
     @Param('postId', ParseIntPipe) postId: number,
@@ -99,16 +99,27 @@ export class PostsController {
     return await this.postsService.getPostById(postId);
   }
 
-  @Patch("/view/:postId")
+  @Patch('/view/:postId')
   @UseGuards(AuthGuard)
-  async viewPost(@Param('postId', ParseIntPipe) postId: number): Promise<{ success: boolean }> {
+  async viewPost(
+    @Param('postId', ParseIntPipe) postId: number,
+  ): Promise<{ success: boolean }> {
     try {
       const result = await this.postsService.viewPost(postId);
       return result;
     } catch (error) {
-      
       console.error('Error viewing post:', error);
-      throw error; 
+      throw error;
     }
   }
+
+  @Roles(Role.AUTHOR)
+  @UseGuards(AuthGuard)
+  @UseGuards(RolesGuard)
+  
+  @Patch('/edit')
+  async editPost(@Body() credentials: EditPostDTO): Promise<PostProps> {
+    return await this.postsService.editPost(credentials);
+  }
 }
+ 

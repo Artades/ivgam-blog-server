@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ParamProps, PostProps, SortProps } from './posts.types';
+import { EditPostDTO, ParamProps, PostProps, SortProps } from './posts.types';
 import { CreatePostDTO } from './posts.types';
 
 import { EmailService } from 'src/email/email.service';
@@ -243,6 +243,33 @@ export class PostsService {
       throw new InternalServerErrorException(
         'Something went wrong viewing the post',
       );
+    }
+  }
+
+  public async editPost(credentials: EditPostDTO): Promise<PostProps> {
+    try {
+      const existingPost = await this.database.prisma.post.findUnique({
+        where: { id: credentials.postId },
+      });
+
+      if (!existingPost) {
+        throw new NotFoundException('Post not found');
+      }
+
+      const updatedPost = await this.database.prisma.post.update({
+        where: { id: credentials.postId },
+        data: {
+          title: credentials.title,
+          body: credentials.body,
+          topic: credentials.topic,
+          hashtags: credentials.hashtags,
+          dateOfUpdation: new Date().toISOString(),
+        },
+      });
+      return updatedPost;
+    } catch (error) {
+      console.log('Error while editing post: ', error);
+      throw new InternalServerErrorException('Something went wrong editing the post');
     }
   }
 }

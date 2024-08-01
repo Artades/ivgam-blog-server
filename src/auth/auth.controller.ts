@@ -30,6 +30,8 @@ export class AuthController implements AuthControllerProps {
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       domain: 'ivgamblog.vercel.app',
+      path: '/',
+      sameSite: "none"
     });
     return { accessToken };
   }
@@ -50,6 +52,7 @@ export class AuthController implements AuthControllerProps {
       httpOnly: true,
       domain: 'ivgamblog.vercel.app',
       path: '/',
+      sameSite: 'none',
     });
 
     return { accessToken };
@@ -77,6 +80,7 @@ export class AuthController implements AuthControllerProps {
       httpOnly: true,
       domain: 'ivgamblog.vercel.app',
       path: '/',
+      sameSite: 'none',
     });
     return { message: 'Token successfully burned' };
   }

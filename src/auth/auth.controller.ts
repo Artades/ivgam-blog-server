@@ -31,7 +31,8 @@ export class AuthController implements AuthControllerProps {
       httpOnly: true,
       domain: 'ivgamblog.vercel.app',
       path: '/',
-      sameSite: "none"
+      sameSite: 'none',
+      secure: true,
     });
     return { accessToken };
   }
@@ -53,6 +54,7 @@ export class AuthController implements AuthControllerProps {
       domain: 'ivgamblog.vercel.app',
       path: '/',
       sameSite: 'none',
+      secure: true,
     });
 
     return { accessToken };
@@ -81,6 +83,7 @@ export class AuthController implements AuthControllerProps {
       domain: 'ivgamblog.vercel.app',
       path: '/',
       sameSite: 'none',
+      secure: true
     });
     return { message: 'Token successfully burned' };
   }

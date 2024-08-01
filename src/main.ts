@@ -14,7 +14,7 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
   app.enableCors({
-    origin: "ivgamblog.vercel.app'",
+    origin: 'ivgamblogserver.online',
     credentials: true,
   });
 

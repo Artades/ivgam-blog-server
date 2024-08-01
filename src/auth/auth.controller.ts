@@ -31,7 +31,7 @@ export class AuthController implements AuthControllerProps {
       httpOnly: true,
       domain: 'ivgamblog.vercel.app',
       path: '/',
-      sameSite: 'none',
+      sameSite: 'lax',
       secure: true,
     });
     return { accessToken };

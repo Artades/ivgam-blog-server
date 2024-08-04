@@ -6,15 +6,19 @@ import * as express from 'express';
 import * as path from 'path';
 import * as fs from 'fs'; // Импортируем модуль fs
 import * as cookieParser from 'cookie-parser';
+import { ConfigService } from './config/config.service';
+
 
 config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
+  const origins = configService.getOrigins();
 
   app.setGlobalPrefix('api');
   app.enableCors({
-    origin: 'ivgamblogserver.online',
+    origin: origins,
     credentials: true,
   });
 
@@ -38,6 +42,7 @@ async function bootstrap() {
 
   // Проверяем и создаем папку uploads, если она не существует
   const uploadsPath = path.join(__dirname, '..', 'uploads');
+
   if (!fs.existsSync(uploadsPath)) {
     console.log("Creating Uploads directive...")
     fs.mkdirSync(uploadsPath, { recursive: true });

@@ -6,6 +6,7 @@ import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UsersModule } from 'src/users/users.module';
+import { ConfigService } from 'src/config/config.service';
 config();
 
 @Module({
@@ -17,10 +18,10 @@ config();
       // signOptions: { expiresIn: "60s" },
     }),
     UsersModule,
-    
+
     ConfigModule,
   ],
-  providers: [AuthService],
+  providers: [AuthService, ConfigService],
   controllers: [AuthController],
   exports: [AuthService],
 })

@@ -20,7 +20,7 @@ export type CookieSetup<T extends 'production' | 'development'> =
 export class ConfigService {
   private origins: string;
   private domains: string;
-  private mode: 'production' | 'development'; // Изменим тип на конкретные значения
+  private mode: 'production' | 'development'; 
 
   constructor() {
     this.origins = process.env.ORIGINS || '';
